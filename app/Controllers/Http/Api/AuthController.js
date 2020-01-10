@@ -37,13 +37,13 @@ class AuthController {
         return response.json(user)
 
       } catch (err) {
-        response.status(401).send({ error: 'Please try again' });
+        response.status(403).send({ error: 'Please try again' });
       }
 
       
     } else {
     
-      return response.status(401).send(validation.messages());
+      return response.status(403).send(validation.messages());
     
     }
 
@@ -77,11 +77,11 @@ class AuthController {
       }
       catch (e) {
         console.log(e)
-        return response.status(401).send({ error: 'Invalid email or password' });
+        return response.status(403).send({ error: 'Invalid email or password' });
       }
 
     } else {
-      response.status(401).send(validation.messages());
+      response.status(403).send(validation.messages());
     }
 
   }
@@ -101,10 +101,10 @@ class AuthController {
           .newRefreshToken()
           .generateForRefreshToken(refresh_token);
       } catch (err) {
-        return response.status(401).send({ error: 'Invalid refresh token' });
+        return response.status(403).send({ error: 'Invalid refresh token' });
       }
     } else {
-      return response.status(401).send(validation.messages());
+      return response.status(403).send(validation.messages());
     }
   }
 
@@ -126,13 +126,13 @@ class AuthController {
           refreshToken.delete();
           return response.status(200).send({ status: 'ok' });
         } else {
-          return response.status(401).send({ error: 'Invalid refresh token' });
+          return response.status(403).send({ error: 'Invalid refresh token' });
         }
       } catch (err) {
-        return response.status(401).send({ error: 'something went wrong' });
+        return response.status(403).send({ error: 'something went wrong' });
       }
     } else {
-      return response.status(401).send(validation.messages());
+      return response.status(403).send(validation.messages());
     }
   }
 
