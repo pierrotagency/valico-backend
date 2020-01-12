@@ -1,7 +1,7 @@
 # valico-backend
 
 Part of this ecosystem
-![alt text](https://raw.githubusercontent.com/pierrotagency/valico-admin/doc/ecosystem.png)
+![alt text](https://raw.githubusercontent.com/pierrotagency/valico-admin/doc/ecosystem.jpg)
 
 Valico backend with NodeJs, Adonis (Almost a Laravel in NodeJS), and JWT session so i can play with multiple fronts (stateless session)
 (MYSQL for now)
