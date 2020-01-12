@@ -4,7 +4,7 @@ const { validate } = use('Validator');
 
 class PostController {
 
-  async getPosts({requestuest, response}) {
+  async list({requestuest, response}) {
     
     let posts = await Post.query().with('user').fetch()
 
@@ -27,13 +27,45 @@ class PostController {
 
     if (!validation.fails()) {
   
-
       try {
-        // if (await auth.check()) {
+       
         let post = await auth.user.posts().create(fields)
         await post.load('user');
         return response.json(post)
-        // }
+      
+      } catch (e) {
+        console.log(e)
+        return response.json({code: 500, message: e.message})
+      }
+
+    } else {
+      response.status(422).send(validation.messages());
+    }
+
+  }
+
+  async update({auth, params, response}) {
+
+    const rules = {
+      name: 'required',
+      slug: 'required'
+    };
+
+    const validation = await validate(fields, rules);
+
+    if (!validation.fails()) {
+  
+      try {
+
+        let post = await Post.find(params.id)
+        
+        post.name = request.input('name')
+        post.slug = request.input('slug');
+
+        await post.save()
+        await post.load('user');
+
+        return response.json(post)
 
       } catch (e) {
         console.log(e)
@@ -41,28 +73,56 @@ class PostController {
       }
 
     } else {
-      response.status(401).send(validation.messages());
+      response.status(422).send(validation.messages());
+    }
+    
+  }
+
+
+  async get({auth, params, response}) {
+
+    try {
+        
+      let post = await Post.find(params.id)
+
+      if(post){
+        await post.load('user');
+        return response.json(post)
+      }
+      else{
+        response.status(404).send({code: 404, message: 'Post not found'});
+      }
+      
+    } catch (e) {
+      console.log(e)
+      return response.json({code: 500, message: e.message})
     }
 
   }
 
-  async update({auth, params, response}) {
-
-    let post = await Post.find(params.id)
-    post.title = request.input('title')
-    post.description = request.input('description');
-
-    await post.save()
-    await post.load('user');
-
-    return response.json(post)
-  }
 
   async delete({auth, params, response}) {
 
-    await Post.find(params.id).delete()
+    try {
+        
+      let post = await Post.find(params.id)
 
-    return response.json({message: 'Post has been deleted'})
+      if(post){
+        
+        await Post.find(params.id).delete()
+
+        return response.json({message: 'Post deleted'})
+        
+      }
+      else{
+        response.status(404).send({code: 404, message: 'Post not found'});
+      }
+      
+    } catch (e) {
+      console.log(e)
+      return response.json({code: 500, message: e.message})
+    }
+
   }
 
 }

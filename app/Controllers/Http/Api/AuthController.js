@@ -43,7 +43,7 @@ class AuthController {
       
     } else {
     
-      return response.status(403).send(validation.messages());
+      return response.status(422).send(validation.messages());
     
     }
 
@@ -81,7 +81,7 @@ class AuthController {
       }
 
     } else {
-      response.status(403).send(validation.messages());
+      response.status(422).send(validation.messages());
     }
 
   }
@@ -104,7 +104,7 @@ class AuthController {
         return response.status(403).send({ error: 'Invalid refresh token' });
       }
     } else {
-      return response.status(403).send(validation.messages());
+      return response.status(422).send(validation.messages());
     }
   }
 
@@ -132,7 +132,7 @@ class AuthController {
         return response.status(403).send({ error: 'something went wrong' });
       }
     } else {
-      return response.status(403).send(validation.messages());
+      return response.status(422).send(validation.messages());
     }
   }
 
