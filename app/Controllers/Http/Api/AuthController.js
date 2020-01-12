@@ -30,7 +30,7 @@ class AuthController {
         let user = await User.create(request.all())
 
         //generate token for user;
-        let token = await auth.generate(user)
+        let token = await auth.withRefreshToken().generate(user)
 
         Object.assign(user, token)
 
