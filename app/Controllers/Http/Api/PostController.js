@@ -4,7 +4,7 @@ const { validate } = use('Validator');
 
 class PostController {
 
-  async list({requestuest, response}) {
+  async list({request, response}) {
     
     let posts = await Post.query().with('user').fetch()
 
@@ -15,7 +15,6 @@ class PostController {
   }
 
   async store({request, auth, response}) {
-
     const rules = {
       name: 'required',
       slug: 'required'
@@ -24,11 +23,10 @@ class PostController {
     const fields = request.all();
 
     const validation = await validate(fields, rules);
-
     if (!validation.fails()) {
   
       try {
-       
+
         let post = await auth.user.posts().create(fields)
         await post.load('user');
         return response.json(post)
@@ -45,14 +43,12 @@ class PostController {
   }
 
   async update({auth, params, response}) {
-
     const rules = {
       name: 'required',
       slug: 'required'
     };
 
     const validation = await validate(fields, rules);
-
     if (!validation.fails()) {
   
       try {
@@ -84,7 +80,6 @@ class PostController {
     try {
         
       let post = await Post.find(params.id)
-
       if(post){
         await post.load('user');
         return response.json(post)
@@ -106,7 +101,6 @@ class PostController {
     try {
         
       let post = await Post.find(params.id)
-
       if(post){
         
         await Post.find(params.id).delete()
