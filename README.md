@@ -1,31 +1,35 @@
 # valico-backend
 
+Part of this ecosystem
+![alt text](https://raw.githubusercontent.com/pierrotagency/valico-admin/doc/ecosystem.png)
+
 Valico backend with NodeJs, Adonis (Almost a Laravel in NodeJS), and JWT session so i can play with multiple fronts (stateless session)
+(MYSQL for now)
 
-MYSQL
-
+## Install
 
 ```bash
 npm install
 ```
 
-.env (put an accesible database params)
+### .env (put an accesible database params)
 ```bash
 cp .env.example .env
 ```
 
-Migrations
-```js
+### Migrations
+```bash
 adonis migration:run
 ```
 
+### Key
 ```bash
 adonis key:generate
 ```
 
-### Run & Build
-
-Dev
+## Run
 ```bash
+npm run dev
+```
 npm run dev
 ```
