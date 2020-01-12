@@ -7,18 +7,12 @@ class PostController {
   async list({request, response}) {
     
     const fields = request.all();
-    console.log(fields);
-
-    let posts = [];
-    if(fields.father){
-      posts = await Post.query().with('user').where('parent_uuid', '=', fields.father).fetch()
-    }
-    else{
-      posts = await Post.query().with('user').whereNull('parent_uuid').fetch()
-    }
     
+    const posts = await (fields.father 
+      ? Post.query().with('user').where('parent_uuid', '=', fields.father).fetch() 
+      : Post.query().with('user').whereNull('parent_uuid').fetch()
+    )
     
-
     return response.json(posts)
   }
 
