@@ -31,5 +31,3 @@ adonis key:generate
 ```bash
 npm run dev
 ```
-npm run dev
-```
