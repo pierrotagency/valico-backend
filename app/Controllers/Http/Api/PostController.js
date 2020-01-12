@@ -4,65 +4,65 @@ const { validate } = use('Validator');
 
 class PostController {
 
-  async getPosts({req, res}) {
+  async getPosts({requestuest, response}) {
     
     let posts = await Post.query().with('user').fetch()
 
-    return res.json(posts)
+    return response.json(posts)
   }
 
   async create() {
   }
 
-  async store({req, auth, res}) {
+  async store({request, auth, response}) {
 
     const rules = {
-      title: 'required',
-      description: 'required'
+      name: 'required',
+      slug: 'required'
     };
 
-    const fields = req.all();
+    const fields = request.all();
 
     const validation = await validate(fields, rules);
 
     if (!validation.fails()) {
+  
 
-        
       try {
         // if (await auth.check()) {
         let post = await auth.user.posts().create(fields)
         await post.load('user');
-        return res.json(post)
+        return response.json(post)
         // }
 
       } catch (e) {
         console.log(e)
-        return res.json({message: 'You are not authorized to perform this action'})
+        return response.json({code: 500, message: e.message})
       }
 
     } else {
-      res.status(401).send(validation.messages());
+      response.status(401).send(validation.messages());
     }
 
   }
 
-  async update({auth, params, res}) {
+  async update({auth, params, response}) {
 
     let post = await Post.find(params.id)
-    post.title = req.input('title')
-    post.description = req.input('description');
+    post.title = request.input('title')
+    post.description = request.input('description');
 
     await post.save()
     await post.load('user');
 
-    return res.json(post)
+    return response.json(post)
   }
 
-  async delete({auth, params, res}) {
+  async delete({auth, params, response}) {
 
     await Post.find(params.id).delete()
 
-    return res.json({message: 'Post has been deleted'})
+    return response.json({message: 'Post has been deleted'})
   }
 
 }
