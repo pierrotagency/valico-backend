@@ -12,8 +12,17 @@ class PostController {
       ? Post.query().with('user').where('parent_uuid', '=', fields.father).fetch() 
       : Post.query().with('user').whereNull('parent_uuid').fetch()
     )
+
+    // console.log(posts)
+
+    let res = posts.toJSON();
+
+    // res.map((element,index) => {
+    //   // console.log(index)
+    //   res[index].dddddd = "sssss"
+    // });
     
-    return response.json(posts)
+    return response.json(res)
   }
 
   async create() {
