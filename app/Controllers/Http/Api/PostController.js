@@ -7,22 +7,23 @@ class PostController {
   async list({request, response}) {
     
     const fields = request.all();
+
+    const page = fields.page? fields.page : 1;
+    const epp = fields.epp? fields.epp : 5;
+    let sort = fields.sort? fields.sort : 'created_at-';
+
+    let sortDirection = 'asc'
+    if(sort.slice(-1)==='-'){
+      sortDirection = 'desc'
+      sort = sort.substring(0, sort.length - 1);
+    }
     
     const posts = await (fields.father 
-      ? Post.query().with('user').where('parent_uuid', '=', fields.father).fetch() 
-      : Post.query().with('user').whereNull('parent_uuid').fetch()
+      ? Post.query().with('user').where('parent_uuid', '=', fields.father).orderBy(sort,sortDirection).paginate(page, epp)
+      : Post.query().with('user').whereNull('parent_uuid').orderBy(sort,sortDirection).paginate(page, epp)
     )
 
-    // console.log(posts)
-
-    let res = posts.toJSON();
-
-    // res.map((element,index) => {
-    //   // console.log(index)
-    //   res[index].dddddd = "sssss"
-    // });
-    
-    return response.json(res)
+    return response.json(posts)
   }
 
   async create() {
