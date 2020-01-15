@@ -4,8 +4,15 @@ const Model = use('Model')
 
 class Post extends Model {
 
+    get jsonFields () {
+        return [ 'content', 'data', 'params' ]
+    }
+
     static boot() {
         super.boot();
+
+        this.addTrait('@provider:Jsonable')
+        
         this.addHook("beforeCreate", "PostHook.uuid");
 
         this.addHook('afterFind', 'PostHook.addFindRelations')

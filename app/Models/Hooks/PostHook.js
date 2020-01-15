@@ -13,14 +13,14 @@ PostHook.uuid = async model => {
 };
 
 PostHook.addFindRelations = async model => {
-    console.log('addFindRelations')
+    // console.log('addFindRelations')
 
     model.path = await getPath(model);
     
 };
 
 PostHook.addFetchRelations = async models => {
-    console.log('addFetchRelations')
+    // console.log('addFetchRelations')
 
     for (let model of models) {
         model.path = await getPath(model);
@@ -30,7 +30,7 @@ PostHook.addFetchRelations = async models => {
 
 
 PostHook.addPaginateRelations = async models => {
-    console.log('addPaginateRelations')
+    // console.log('addPaginateRelations')
 
     for (let model of models) {
         model.path = await getPath(model);

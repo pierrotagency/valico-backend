@@ -110,6 +110,25 @@ class PostController {
 
   }
 
+  async peep({auth, params, response}) {
+
+    try {
+        
+      let post = await Post.find(params.id)
+      if(post){       
+        return response.json(post)
+      }
+      else{
+        response.status(404).send({code: 404, message: 'Post not found'});
+      }
+      
+    } catch (e) {
+      console.log(e)
+      return response.json({code: 500, message: e.message})
+    }
+
+  }
+
 
   async delete({auth, params, response}) {
 

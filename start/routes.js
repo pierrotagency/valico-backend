@@ -44,6 +44,7 @@ Route.group(() => {
     */
     Route.put('/posts/:id', 'Api/PostController.update').middleware('auth')
     Route.delete('posts/:id', 'Api/PostController.delete').middleware('auth')
+    Route.get('posts/:id/peep', 'Api/PostController.peep').middleware('auth')
     Route.get('posts/:id', 'Api/PostController.get').middleware('auth')
     Route.post('/posts', 'Api/PostController.store').middleware('auth')
     Route.get('/posts', 'Api/PostController.list').middleware('auth')
