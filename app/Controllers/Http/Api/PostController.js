@@ -57,21 +57,27 @@ class PostController {
 
   }
 
-  async update({auth, params, response}) {
+  async update({auth, request, response}) {
     const rules = {
-      name: 'required',
-      slug: 'required'
+      post: 'required'      
     };
+
+    const fields = request.all();
 
     const validation = await validate(fields, rules);
     if (!validation.fails()) {
   
       try {
 
-        let post = await Post.find(params.id)
+        let paramPost = fields.post; 
+        let post = await Post.find(paramPost.uuid)
         
-        post.name = request.input('name')
-        post.slug = request.input('slug');
+        // clean the "meta" of the incoming object 
+        const { ['user']: removed, ...paramPost1 } = paramPost;
+        
+        post.merge(paramPost1)
+
+
 
         await post.save()
         await post.load('user');

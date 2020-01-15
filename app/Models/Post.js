@@ -14,10 +14,18 @@ class Post extends Model {
         this.addTrait('@provider:Jsonable')
         
         this.addHook("beforeCreate", "PostHook.uuid");
+        this.addHook('beforeSave', 'PostHook.addUpateRelations')
 
         this.addHook('afterFind', 'PostHook.addFindRelations')
 		this.addHook('afterFetch', 'PostHook.addFetchRelations')
         this.addHook('afterPaginate', 'PostHook.addPaginateRelations')
+
+        
+        // this.addHook('beforeSave', async item => {
+        //     delete item.$attributes.user
+        //     delete item.$attributes.path
+        //     return item
+        // })
         
     }
 

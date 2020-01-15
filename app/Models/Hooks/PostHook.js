@@ -12,15 +12,19 @@ PostHook.uuid = async model => {
     model.uuid = uuidv4();
 };
 
-PostHook.addFindRelations = async model => {
-    // console.log('addFindRelations')
-
+PostHook.addFindRelations = async model => {    
     model.path = await getPath(model);
-    
 };
 
 PostHook.addFetchRelations = async models => {
-    // console.log('addFetchRelations')
+    
+    for (let model of models) {
+        model.path = await getPath(model);
+    }
+
+};
+
+PostHook.addPaginateRelations = async models => {
 
     for (let model of models) {
         model.path = await getPath(model);
@@ -29,12 +33,10 @@ PostHook.addFetchRelations = async models => {
 };
 
 
-PostHook.addPaginateRelations = async models => {
-    // console.log('addPaginateRelations')
+PostHook.addUpateRelations = async model => {
 
-    for (let model of models) {
-        model.path = await getPath(model);
-    }
+    delete model.$attributes.user
+    delete model.$attributes.path
 
 };
 
@@ -60,3 +62,4 @@ async function getPath(model){
     return arr
     
 }
+
