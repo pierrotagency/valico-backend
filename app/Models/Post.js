@@ -20,13 +20,6 @@ class Post extends Model {
 		this.addHook('afterFetch', 'PostHook.addFetchRelations')
         this.addHook('afterPaginate', 'PostHook.addPaginateRelations')
 
-        
-        // this.addHook('beforeSave', async item => {
-        //     delete item.$attributes.user
-        //     delete item.$attributes.path
-        //     return item
-        // })
-        
     }
 
     static get primaryKey() {

@@ -1,6 +1,5 @@
 'use strict'
 
-
 const uuidv4 = require("uuid/v4");
 
 const PostHook = exports = module.exports = {}
@@ -16,28 +15,17 @@ PostHook.addFindRelations = async model => {
     model.path = await getPath(model);
 };
 
-PostHook.addFetchRelations = async models => {
-    
-    for (let model of models) {
-        model.path = await getPath(model);
-    }
-
+PostHook.addFetchRelations = async models => {    
+    for (let model of models) model.path = await getPath(model);
 };
 
 PostHook.addPaginateRelations = async models => {
-
-    for (let model of models) {
-        model.path = await getPath(model);
-    }
-
+    for (let model of models) model.path = await getPath(model);    
 };
 
-
 PostHook.addUpateRelations = async model => {
-
     delete model.$attributes.user
     delete model.$attributes.path
-
 };
 
 async function getPath(model){
@@ -60,6 +48,4 @@ async function getPath(model){
     }
 
     return arr
-    
 }
-

@@ -31,8 +31,7 @@ class PostController {
 
   async store({request, auth, response}) {
     const rules = {
-      name: 'required',
-      slug: 'required'
+      post: 'required'
     };
 
     const fields = request.all();
@@ -47,8 +46,8 @@ class PostController {
         return response.json(post)
       
       } catch (e) {
-        console.log(e)
-        return response.json({code: 500, message: e.message})
+          console.log(e)
+          return response.json({code: 500, message: e.message})
       }
 
     } else {
@@ -72,12 +71,7 @@ class PostController {
         let paramPost = fields.post; 
         let post = await Post.find(paramPost.uuid)
         
-        // clean the "meta" of the incoming object 
-        const { ['user']: removed, ...paramPost1 } = paramPost;
-        
-        post.merge(paramPost1)
-
-
+        post.merge(paramPost)
 
         await post.save()
         await post.load('user');
