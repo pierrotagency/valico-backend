@@ -1,5 +1,6 @@
 'use strict'
 const Post = use('App/Models/Post');
+const Tag = use('App/Models/Tag');
 const { validate } = use('Validator');
 
 class PostController {
@@ -42,6 +43,11 @@ class PostController {
       try {
 
         let post = await auth.user.posts().create(fields)
+
+        let newTags = fields.meta_keywords.filter(tag => tag.isNew)
+            newTags.forEach(function(i){ delete i.isNew });
+        const tags = await Tag.createMany(newTags);
+
         await post.load('user');
         return response.json(post)
       
@@ -71,10 +77,17 @@ class PostController {
         let paramPost = fields.post; 
         let post = await Post.find(paramPost.uuid)
         
+        let newTags = paramPost.meta_keywords.filter(tag => tag.isNew)
+            newTags.forEach(function(i){ delete i.isNew });
+        
+        paramPost.meta_keywords.forEach(function(i){ delete i.isNew });
+
         post.merge(paramPost)
 
         await post.save()
         await post.load('user');
+
+        const addedTags = await Tag.createMany(newTags);
 
         return response.json(post)
 
