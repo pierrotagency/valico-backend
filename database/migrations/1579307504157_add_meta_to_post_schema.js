@@ -9,7 +9,7 @@ class AddMetaToPostSchema extends Schema {
       // alter table
       table.string('meta_title',200)
       table.string('meta_description',400)
-      table.string('meta_keywords',200)
+      table.json('meta_keywords')
       table.string('meta_image',200)
     })
   }

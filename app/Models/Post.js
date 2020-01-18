@@ -5,7 +5,7 @@ const Model = use('Model')
 class Post extends Model {
 
     get jsonFields () {
-        return [ 'content', 'data', 'params' ]
+        return [ 'content', 'data', 'params', 'meta_keywords' ]
     }
 
     static boot() {
@@ -45,6 +45,15 @@ class Post extends Model {
     // getPath(model) {
     //     return res;
     // }
+
+
+    getChildsAllowed (value) {
+        return value===1? true : false;
+    }
+
+    setChildsAllowed (value) {
+        return value? 1 : 0;
+    }
 
 }
 
