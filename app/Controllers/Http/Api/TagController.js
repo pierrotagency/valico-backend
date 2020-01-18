@@ -25,17 +25,16 @@ class TagController {
     const validation = await validate(fields, rules);
     if (!validation.fails()) {
 
-      
-  
-  //     try {
+      try {
 
-  //       let tag = await Tag.create(fields)        
-  //       return response.json(tag)
+        // let tag = await Tag.create(fields)        
+        const tags = await Tag.createMany(fields.tags);
+        return response.json(tags)
       
-  //     } catch (e) {
-  //         console.log(e)
-  //         return response.json({code: 500, message: e.message})
-  //     }
+      } catch (e) {
+          console.log(e)
+          return response.json({code: 500, message: e.message})
+      }
 
     } else {
       response.status(422).send(validation.messages());

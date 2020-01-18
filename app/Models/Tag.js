@@ -17,6 +17,14 @@ class Tag extends Model {
     //     return res;
     // }
 
+    static get createdAtColumn () {
+        return null
+    }
+
+    static get updatedAtColumn () {
+        return null
+    }
+
 }
 
 module.exports = Tag
