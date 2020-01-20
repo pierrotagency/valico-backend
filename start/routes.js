@@ -48,6 +48,8 @@ Route.group(() => {
     Route.get('posts/:id', 'Api/PostController.get').middleware('auth')
     Route.post('/posts', 'Api/PostController.store').middleware('auth')
     Route.get('/posts', 'Api/PostController.list').middleware('auth')
+    
+    Route.post('/posts/exists/slug', 'Api/PostController.slugExists').middleware('auth')
 
     /*
     |--------------------------------------------------------------------------
@@ -57,6 +59,13 @@ Route.group(() => {
     Route.post('/tags', 'Api/TagController.store').middleware('auth')
     Route.get('/tags', 'Api/TagController.list').middleware('auth')
 
+    /*
+    |--------------------------------------------------------------------------
+    | API - Media
+    |--------------------------------------------------------------------------
+    */
+    Route.post('/media/upload', 'Api/MediaController.upload')
+    
     /*
     |--------------------------------------------------------------------------
     | API - User

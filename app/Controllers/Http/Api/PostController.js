@@ -143,6 +143,46 @@ class PostController {
   }
 
 
+  async slugExists({auth, params, request, response}) {
+
+    const rules = {
+      slug: 'required'      
+    };
+
+    const fields = request.all();
+
+    const validation = await validate(fields, rules);
+    if (!validation.fails()) {
+
+      try {
+          
+        let post = await Post.findBy('slug', fields.slug)
+        if(post){       
+          return response.json({
+            found: true,
+            id: post.uuid,
+            name: post.name
+          })
+        }
+        else{
+          return response.json({
+            found: false            
+          })
+        }
+        
+      } catch (e) {
+        console.log(e)
+        return response.json({code: 500, message: e.message})
+      }
+
+    
+    } else {
+      response.status(422).send(validation.messages());
+    }
+
+  }
+
+
   async delete({auth, params, response}) {
 
     try {
