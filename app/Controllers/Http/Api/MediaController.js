@@ -9,11 +9,13 @@ class MediaController {
   async upload({request, response}) {
     
 
-    const validationOptions = {
-      types: ['image'],
-      size: '2mb',
-      extnames: ['jpg', 'png', 'gif']
-    }
+    const validationOptions = JSON.parse(request.input('validations', '{}'));
+
+    // const validationOptions = {
+    //   types: ['image'],
+    //   size: '1mb',
+    //   extnames: ['jpg', 'png', 'gif']
+    // }
 
     const uploadedFile = request.file('file', validationOptions)
   
