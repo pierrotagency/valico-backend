@@ -1,7 +1,7 @@
 'use strict'
 
 const Helpers = use('Helpers')
-
+const uuidv4 = require("uuid/v4");
 // const { validate } = use('Validator');
 
 class MediaController {
@@ -10,7 +10,6 @@ class MediaController {
     
 
     const validationOptions = JSON.parse(request.input('validations', '{}'));
-
     // const validationOptions = {
     //   types: ['image'],
     //   size: '1mb',
@@ -19,12 +18,14 @@ class MediaController {
 
     const uploadedFile = request.file('file', validationOptions)
   
-    console.log(uploadedFile.clientName)
-    console.log(uploadedFile.extname)
-    console.log(uploadedFile.size)
-    console.log(uploadedFile.type)
-
-    const serverName = 'custom-name.jpg';
+    let originalName = uploadedFile.clientName.replace(/\.[^/.]+$/, "") // remove extension
+        originalName = originalName.replace('_','-') // if the name has underscores, replace it, so we can use _ later to parse the file name
+    
+    const uuid = uuidv4();
+    const type = uploadedFile.type;
+    const size = uploadedFile.size;
+    const ext = uploadedFile.extname.toLowerCase();
+    const serverName =  `${uuid}__${originalName}__${type}__${size}.${ext}`;
 
     await uploadedFile.move(Helpers.tmpPath('uploads'), {
       name: serverName,
@@ -36,7 +37,11 @@ class MediaController {
     }
     else{
       return response.json({
-        uploadedFile: serverName
+        name: serverName,
+        size: size,
+        type: type,
+        ext: ext,
+        uuid: uuid,
       })
     }
 
