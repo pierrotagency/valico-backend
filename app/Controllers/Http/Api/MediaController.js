@@ -2,21 +2,26 @@
 
 const Helpers = use('Helpers')
 const uuidv4 = require("uuid/v4");
-// const { validate } = use('Validator');
+const { validate } = use('Validator');
 
 class MediaController {
 
   
   async uploadFile({request, response}) {
 
-    const validationOptions = JSON.parse(request.input('validations', '{}'));
-    // const validationOptions = {
-    //   size: '1mb',
-    //   extnames: ['pdf', 'doc']
-    // }
+    let params = request.only(['validations'])
+        params.file = request.file('file')
 
-    const uploadedFile = request.file('file', validationOptions)
-  
+    const validations = JSON.parse(params.validations)
+    // const validations = {         
+    //   file: 'required|file|file_ext:pdf,doc|file_size:5mb'
+    // }
+    const validation = await validate(params, validations)
+    if (validation.fails()) return response.status(422).send(validation.messages());
+
+
+    const uploadedFile = params.file
+
     let originalName = uploadedFile.clientName.replace(/\.[^/.]+$/, "") // remove extension
         originalName = originalName.replace('_','-') // if the name has underscores, replace it, so we can use _ later to parse the file name
     
@@ -33,21 +38,6 @@ class MediaController {
   
     if (!uploadedFile.moved()) {      
       return response.status(422).send(uploadedFile.error());
-
-      // Example validation response
-      // {
-      //   fieldName: "field_name",
-      //   clientName: "invalid-file-type.ai",
-      //   message: "Invalid file type postscript or application. Only image is allowed",
-      //   type: "type"
-      // }
-      // {
-      //   fieldName: "field_name",
-      //   clientName: "invalid-file-size.png",
-      //   message: "File size should be less than 2MB",
-      //   type: "size"
-      // }
-
     }
     else{
 
@@ -68,15 +58,19 @@ class MediaController {
 
   async uploadImage({request, response}) {
 
-    const validationOptions = JSON.parse(request.input('validations', '{}'));
-    // const validationOptions = {
-    //   types: ['image'],
-    //   size: '1mb',
-    //   extnames: ['jpg', 'png', 'gif']
-    // }
+    let params = request.only(['validations'])
+        params.file = request.file('file')
 
-    const uploadedFile = request.file('file', validationOptions)
-  
+    const validations = JSON.parse(params.validations)
+    // const validations = {         
+    //   file: 'required|file|file_ext:png,gif,jpg,jpeg,tiff,bmp|file_size:1mb|file_types:image'
+    // }
+    const validation = await validate(params, validations)
+    if (validation.fails()) return response.status(422).send(validation.messages());
+
+
+    const uploadedFile = params.file
+
     let originalName = uploadedFile.clientName.replace(/\.[^/.]+$/, "") // remove extension
         originalName = originalName.replace('_','-') // if the name has underscores, replace it, so we can use _ later to parse the file name
     
@@ -93,21 +87,6 @@ class MediaController {
   
     if (!uploadedFile.moved()) {      
       return response.status(422).send(uploadedFile.error());
-
-      // Example validation response
-      // {
-      //   fieldName: "field_name",
-      //   clientName: "invalid-file-type.ai",
-      //   message: "Invalid file type postscript or application. Only image is allowed",
-      //   type: "type"
-      // }
-      // {
-      //   fieldName: "field_name",
-      //   clientName: "invalid-file-size.png",
-      //   message: "File size should be less than 2MB",
-      //   type: "size"
-      // }
-
     }
     else{
 
@@ -122,7 +101,6 @@ class MediaController {
         uuid: uuid
       })
     }
-
 
   }
 
