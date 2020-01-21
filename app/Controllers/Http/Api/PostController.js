@@ -97,7 +97,7 @@ class PostController {
       }
 
     } else {
-      response.status(422).send(validation.messages());
+      return response.status(422).send(validation.messages());
     }
     
   }
