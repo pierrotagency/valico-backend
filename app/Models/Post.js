@@ -5,7 +5,7 @@ const Model = use('Model')
 class Post extends Model {
 
     get jsonFields () {
-        return [ 'content', 'data', 'params', 'meta_keywords' ]
+        return [ 'content', 'data', 'params', 'meta_keywords','meta_image' ]
     }
 
     static boot() {
