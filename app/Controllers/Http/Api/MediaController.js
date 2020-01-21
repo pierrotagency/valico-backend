@@ -7,7 +7,6 @@ const uuidv4 = require("uuid/v4");
 class MediaController {
 
   async upload({request, response}) {
-    
 
     const validationOptions = JSON.parse(request.input('validations', '{}'));
     // const validationOptions = {
@@ -34,14 +33,33 @@ class MediaController {
   
     if (!uploadedFile.moved()) {      
       return response.status(422).send(uploadedFile.error());
+
+      // Example validation response
+      // {
+      //   fieldName: "field_name",
+      //   clientName: "invalid-file-type.ai",
+      //   message: "Invalid file type postscript or application. Only image is allowed",
+      //   type: "type"
+      // }
+      // {
+      //   fieldName: "field_name",
+      //   clientName: "invalid-file-size.png",
+      //   message: "File size should be less than 2MB",
+      //   type: "size"
+      // }
+
     }
     else{
+
+      // OK UPLOADED 
+
       return response.json({
-        name: serverName,
+        path: serverName,
+        name: `${originalName}.${ext}`,
         size: size,
         type: type,
         ext: ext,
-        uuid: uuid,
+        uuid: uuid
       })
     }
 
