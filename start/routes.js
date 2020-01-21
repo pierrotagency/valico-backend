@@ -64,7 +64,8 @@ Route.group(() => {
     | API - Media
     |--------------------------------------------------------------------------
     */
-    Route.post('/media/upload', 'Api/MediaController.upload')
+    Route.post('/media/file/upload', 'Api/MediaController.uploadFile')
+    Route.post('/media/image/upload', 'Api/MediaController.uploadImage')
     
     /*
     |--------------------------------------------------------------------------
