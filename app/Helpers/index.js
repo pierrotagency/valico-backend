@@ -9,14 +9,11 @@ const crypto = use('crypto')
  * @param  {string}   str - a Json or a String that should be json
  * @return {string}   The JSON always
  */
-const safeParseJSON = (str) => {
-    let res = {};
-    try {
-        res = JSON.parse(str);
-    } catch (e) {
-        return {};
-    }
-    return res;    
+const safeParseJSON = (str) => {    
+    if(typeof str === 'string')
+        return JSON.parse(str);
+    else
+        return str;    
 }
 
 

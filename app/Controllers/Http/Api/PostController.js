@@ -83,7 +83,6 @@ class PostController {
       delete fields._validations;
     }
     
-    
     const validation = await validate(fields, validations.objects, validations.messages);
     if (!validation.fails()) {
   

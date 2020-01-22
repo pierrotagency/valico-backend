@@ -3,9 +3,14 @@
 class StorePost {
   
   get rules () {
+
+    const postUuid = this.ctx.params.uuid
+
+    console.log(postUuid)
+
     return {
-      name: 'required|min:6',
-      slug: 'required|unique:posts,slug'
+      name: `required|min:6`,
+      slug: `required|unique:posts,slug,uuid,${postUuid}`
     }
   }
 
@@ -14,7 +19,7 @@ class StorePost {
       'name.required': 'You must provide a name',
       'name.min': 'You must provide a longer name.',
       'slug.required': 'This slug is required.',
-      'slug.unique': 'The slug is already being used by another post'
+      'slug.unique': 'The slug {{slug}} is already being used by another post'
     }
   }
 

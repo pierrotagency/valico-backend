@@ -3,10 +3,14 @@
 class UpdatePost {
   
   get rules () {
+    
+    const objectId = this.ctx.params.id //is always ID, not UUID
+
     return {
-      name: 'required|min:6',
-      slug: 'required|unique:posts,slug'
+      name: `required|min:6`,
+      slug: `required|unique:posts,slug,uuid,${objectId}`
     }
+
   }
 
   get messages () {
