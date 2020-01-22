@@ -53,7 +53,7 @@ class PostController {
       
       } catch (e) {
           console.log(e)
-          return response.json({code: 500, message: e.message})
+          return response.status(500).json({code: 500, message: e.message})
       }
 
     } else {
@@ -63,18 +63,32 @@ class PostController {
   }
 
   async update({auth, request, response}) {
-    const rules = {
-      post: 'required'      
-    };
+    
+    // const rules = {
+    //   // post: 'required',
+    //   name: 'required|min:6',
+    //   slug: 'required|unique:posts,slug'
+    // };
+
+    // const messages = {
+    //     'name.min': 'El min del nombre es de 6'
+    // }
 
     const fields = request.all();
 
-    const validation = await validate(fields, rules);
+    let validations = {object:{},messages:{}}
+    if(fields._validations){
+      validations = fields._validations
+      delete fields._validations;
+    }
+    
+    
+    const validation = await validate(fields, validations.objects, validations.messages);
     if (!validation.fails()) {
   
       try {
 
-        let paramPost = fields.post; 
+        let paramPost = fields // fields.post; 
         let post = await Post.find(paramPost.uuid)
         
         let newTags = paramPost.meta_keywords.filter(tag => tag.isNew)
@@ -93,7 +107,7 @@ class PostController {
 
       } catch (e) {
         console.log(e)
-        return response.json({code: 500, message: e.message})
+        return response.status(500).json({code: 500, message: e.message})
       }
 
     } else {
@@ -118,7 +132,7 @@ class PostController {
       
     } catch (e) {
       console.log(e)
-      return response.json({code: 500, message: e.message})
+      return response.status(500).json({code: 500, message: e.message})
     }
 
   }
@@ -137,7 +151,7 @@ class PostController {
       
     } catch (e) {
       console.log(e)
-      return response.json({code: 500, message: e.message})
+      return response.status(500).json({code: 500, message: e.message})
     }
 
   }
@@ -172,7 +186,7 @@ class PostController {
         
       } catch (e) {
         console.log(e)
-        return response.json({code: 500, message: e.message})
+        return response.status(500).json({code: 500, message: e.message})
       }
 
     
@@ -201,7 +215,7 @@ class PostController {
       
     } catch (e) {
       console.log(e)
-      return response.json({code: 500, message: e.message})
+      return response.status(500).json({code: 500, message: e.message})
     }
 
   }

@@ -9,18 +9,26 @@ class MediaController {
   
   async uploadFile({request, response}) {
 
-    let params = request.only(['validations'])
-        params.file = request.file('file')
+    let fields = request.only(['validations'])
+        fields.fileobj = request.file('fileobj')
 
-    const validations = JSON.parse(params.validations)
+    const validations = JSON.parse(fields._validations)
+
+    console.log(validations)
+  
     // const validations = {         
     //   file: 'required|file|file_ext:pdf,doc|file_size:5mb'
     // }
-    const validation = await validate(params, validations)
+    //   const messages = {
+    //     'file.required': 'Requiiiired'
+    // }
+
+    
+    const validation = await validate(fields, validations.objects, validations.messages)
     if (validation.fails()) return response.status(422).send(validation.messages());
 
 
-    const uploadedFile = params.file
+    const uploadedFile = fields.fileobj
 
     let originalName = uploadedFile.clientName.replace(/\.[^/.]+$/, "") // remove extension
         originalName = originalName.replace('_','-') // if the name has underscores, replace it, so we can use _ later to parse the file name
