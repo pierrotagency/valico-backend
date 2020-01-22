@@ -9,8 +9,10 @@ Valico backend with NodeJs, Adonis (Almost a Laravel in NodeJS), and JWT session
 ## Install
 
 ```bash
-npm install
+yarn
 ```
+
+*Adding libs with Yarn*
 
 ### .env (put an accesible database params)
 ```bash

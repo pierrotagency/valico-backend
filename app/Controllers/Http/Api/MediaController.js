@@ -4,6 +4,7 @@ const Helpers = use('Helpers')
 const uuidv4 = require("uuid/v4");
 const { validate } = use('Validator');
 const { safeParseJSON } = use('App/Helpers')
+const sharp = require('sharp');
 
 class MediaController {
 
@@ -62,18 +63,21 @@ class MediaController {
 
   async uploadImage({request, response}) {
 
-    let params = request.only(['validations'])
-        params.file = request.file('file')
+    let fields = request.only(['_validations'])
+        fields.fileobj = request.file('fileobj')
 
-    const validations = JSON.parse(params.validations)
-    // const validations = {         
-    //   file: 'required|file|file_ext:png,gif,jpg,jpeg,tiff,bmp|file_size:1mb|file_types:image'
-    // }
-    const validation = await validate(params, validations)
+    let validations = {object:{},messages:{}}
+    if(fields._validations){
+      validations = safeParseJSON(fields._validations) // it might come as a JSON (if regular post) or as a stringified JSON if lone ajax
+      delete fields._validations;
+    }
+
+    // TODO ****** custom validation menssages not working yet (only for FILE UPLOAD)    
+    const validation = await validate(fields, validations.objects, validations.messages)
     if (validation.fails()) return response.status(422).send(validation.messages());
 
 
-    const uploadedFile = params.file
+    const uploadedFile = fields.fileobj
 
     let originalName = uploadedFile.clientName.replace(/\.[^/.]+$/, "") // remove extension
         originalName = originalName.replace('_','-') // if the name has underscores, replace it, so we can use _ later to parse the file name
@@ -88,11 +92,37 @@ class MediaController {
       name: serverName,
       overwrite: true
     })
+
+
+    // console.log(uploadedFile);
   
     if (!uploadedFile.moved()) {      
       return response.status(422).send(uploadedFile.error());
     }
     else{
+
+
+      const outputFile = Helpers.tmpPath('uploads') + '/resizeddddd.jpg' 
+
+      const inputFile = Helpers.tmpPath('uploads') + '/' + serverName
+
+      console.log(inputFile)
+
+      sharp(inputFile).resize({ height: 780 }).toFile(outputFile)
+      .then(function(newFileInfo) {
+
+        
+          // newFileInfo holds the output file properties
+          console.log("Success")
+
+          console.log(newFileInfo)
+          
+      })
+      .catch(function(err) {
+          console.log("Error occured");
+
+          console.log(err)
+      });
 
       // OK UPLOADED 
 
