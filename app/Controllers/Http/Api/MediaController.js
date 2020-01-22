@@ -15,21 +15,11 @@ class MediaController {
 
     let validations = {object:{},messages:{}}
     if(fields._validations){
-      validations = safeParseJSON(fields._validations)
+      validations = safeParseJSON(fields._validations) // it might come as a JSON (if regular post) or as a stringified JSON if lone ajax
       delete fields._validations;
     }
-    
-    // console.log(validations)
-    // console.log(fields)
 
-    // const validations = {         
-    //   file: 'required|file|file_ext:pdf,doc|file_size:5mb'
-    // }
-    //   const messages = {
-    //     'file.required': 'Requiiiired'
-    // }
-
-    
+    // TODO ****** custom validation menssages not working yet (only for FILE UPLOAD)    
     const validation = await validate(fields, validations.objects, validations.messages)
     if (validation.fails()) return response.status(422).send(validation.messages());
 

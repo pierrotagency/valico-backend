@@ -79,7 +79,7 @@ class PostController {
 
     let validations = {object:{},messages:{}}
     if(fields._validations){
-      validations = safeParseJSON(fields._validations)
+      validations = safeParseJSON(fields._validations) // it might come as a JSON (if regular post) or as a stringified JSON if lone ajax
       delete fields._validations;
     }
     
