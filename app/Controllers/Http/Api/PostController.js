@@ -32,13 +32,15 @@ class PostController {
   }
 
   async store({request, auth, response}) {
-    const rules = {
-      post: 'required'
-    };
-
     const fields = request.all();
 
-    const validation = await validate(fields, rules);
+    let validations = {object:{},messages:{}}
+    if(fields._validations){
+      validations = safeParseJSON(fields._validations) // it might come as a JSON (if regular post) or as a stringified JSON if lone ajax
+      delete fields._validations;
+    }
+    
+    const validation = await validate(fields, validations.objects, validations.messages);
     if (!validation.fails()) {
   
       try {
@@ -47,7 +49,7 @@ class PostController {
 
         let newTags = fields.meta_keywords.filter(tag => tag.isNew)
             newTags.forEach(function(i){ delete i.isNew });
-        const tags = await Tag.createMany(newTags);
+        const addedTags = await Tag.createMany(newTags);
 
         await post.load('user');
         return response.json(post)

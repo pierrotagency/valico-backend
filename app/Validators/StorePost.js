@@ -3,14 +3,9 @@
 class StorePost {
   
   get rules () {
-
-    const postUuid = this.ctx.params.uuid
-
-    console.log(postUuid)
-
     return {
       name: `required|min:6`,
-      slug: `required|unique:posts,slug,uuid,${postUuid}`
+      slug: `required|unique:posts,slug`
     }
   }
 
