@@ -3,19 +3,25 @@
 const Helpers = use('Helpers')
 const uuidv4 = require("uuid/v4");
 const { validate } = use('Validator');
+const { safeParseJSON } = use('App/Helpers')
 
 class MediaController {
 
   
   async uploadFile({request, response}) {
 
-    let fields = request.only(['validations'])
+    let fields = request.only(['_validations'])
         fields.fileobj = request.file('fileobj')
 
-    const validations = JSON.parse(fields._validations)
+    let validations = {object:{},messages:{}}
+    if(fields._validations){
+      validations = safeParseJSON(fields._validations)
+      delete fields._validations;
+    }
+    
+    // console.log(validations)
+    // console.log(fields)
 
-    console.log(validations)
-  
     // const validations = {         
     //   file: 'required|file|file_ext:pdf,doc|file_size:5mb'
     // }

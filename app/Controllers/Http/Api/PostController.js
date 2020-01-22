@@ -2,6 +2,7 @@
 const Post = use('App/Models/Post');
 const Tag = use('App/Models/Tag');
 const { validate } = use('Validator');
+const { safeParseJSON } = use('App/Helpers')
 
 class PostController {
 
@@ -78,7 +79,7 @@ class PostController {
 
     let validations = {object:{},messages:{}}
     if(fields._validations){
-      validations = fields._validations
+      validations = safeParseJSON(fields._validations)
       delete fields._validations;
     }
     
