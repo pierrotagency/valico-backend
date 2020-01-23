@@ -19,7 +19,16 @@ const safeParseJSON = (str) => {
 }
 
 
+/*
 
+From
+Photo-9.jpg,
+{   
+    size: "145963"
+    type: "image"
+}
+To 52054432-5a54-4504-b90e-6e94c3e59852--name-photo_9--size-145963--type-image.jpg
+*/
 const gatMetaFilename = ( originalFilename, params={}, uuid=null ) => {    
     
     let newName = originalFilename.replace(/\.[^/.]+$/, "") // remove extension
@@ -40,6 +49,19 @@ const gatMetaFilename = ( originalFilename, params={}, uuid=null ) => {
 
 }
 
+/*
+From 52054432-5a54-4504-b90e-6e94c3e59852--name-photo_9--size-145963--type-image.jpg
+To
+{
+    original: "52054432-5a54-4504-b90e-6e94c3e59852--name-photo_9--size-145963--type-image.jpg"
+    ext: "jpg"
+    uuid: "52054432-5a54-4504-b90e-6e94c3e59852"
+    name: "photo_9"
+    size: "145963"
+    type: "image"
+    filename: "photo_9.jpg"
+}
+*/
 const parseMetaFilename = ( filename ) => {    
     let obj = {}
     
