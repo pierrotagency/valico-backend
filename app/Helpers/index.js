@@ -49,9 +49,13 @@ const parseMetaFilename = ( filename ) => {
     obj.original = filename
     obj.ext = ext
     
-    name.split('--').forEach(part => {
-        const param = part.split('-')
-        if(param.length===2) obj[param[0]] = param[1]
+    name.split('--').forEach((part,index) => {
+        if(index===0)
+            obj.uuid = part
+        else{
+            const param = part.split('-')
+            if(param.length===2) obj[param[0]] = param[1]
+        }        
     })
 
     // add computed filename for common purposes
