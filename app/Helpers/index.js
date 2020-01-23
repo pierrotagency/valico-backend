@@ -3,6 +3,8 @@
 // const Drive = use('Drive')
 const crypto = use('crypto')
 
+const uuidv4 = require("uuid/v4");
+
 
 /**
  * Parse JSON if is not already a JSON
@@ -14,6 +16,48 @@ const safeParseJSON = (str) => {
         return JSON.parse(str);
     else
         return str;    
+}
+
+
+
+const gatMetaFilename = ( originalFilename, params={}, uuid=null ) => {    
+    
+    let newName = originalFilename.replace(/\.[^/.]+$/, "") // remove extension
+        newName = newName.replace('-','_').replace(/[^a-z0-9]/gi, '_').toLowerCase() // sanitize filename and remove - thast will be used fopr file params
+    
+    const prefixId = uuid ? uuid : uuidv4()
+    
+    const ext = originalFilename.split('.').pop().toLowerCase()
+
+    let stringParams = ''
+    Object.keys(params).map(key => {
+        stringParams += '--' + key + '-' + params[key].toString().replace('-','_').replace(/[^a-z0-9]/gi, '_').toLowerCase()
+    })
+    
+    const finalName = `${prefixId}--name-${newName}${stringParams}.${ext}`
+
+    return finalName.toLowerCase();
+
+}
+
+const parseMetaFilename = ( filename ) => {    
+    let obj = {}
+    
+    const name = filename.replace(/\.[^/.]+$/, "") // remove extension
+    const ext = filename.split('.').pop()
+
+    obj.original = filename
+    obj.ext = ext
+    
+    name.split('--').forEach(part => {
+        const param = part.split('-')
+        if(param.length===2) obj[param[0]] = param[1]
+    })
+
+    // add computed filename for common purposes
+    obj.filename = (obj.name && obj.ext) ? `${obj.name}.${obj.ext}` : ''
+
+    return obj
 }
 
 
@@ -59,5 +103,7 @@ const str_random = async (length = 40) => {
 module.exports = {
     upload,
     str_random,
-    safeParseJSON
+    safeParseJSON,
+    gatMetaFilename,
+    parseMetaFilename
 }

@@ -3,7 +3,7 @@
 const Helpers = use('Helpers')
 const uuidv4 = require("uuid/v4");
 const { validate } = use('Validator');
-const { safeParseJSON } = use('App/Helpers')
+const { safeParseJSON, gatMetaFilename, parseMetaFilename } = use('App/Helpers')
 const sharp = require('sharp');
 
 class MediaController {
@@ -28,13 +28,13 @@ class MediaController {
     const uploadedFile = fields.fileobj
 
     let originalName = uploadedFile.clientName.replace(/\.[^/.]+$/, "") // remove extension
-        originalName = originalName.replace('_','-') // if the name has underscores, replace it, so we can use _ later to parse the file name
+        originalName = originalName.replace('-','_').replace(/[^a-z0-9]/gi, '_').toLowerCase() // sanitize filename and remove - thast will be used fopr file params
     
     const uuid = uuidv4();
     const type = uploadedFile.type;
     const size = uploadedFile.size;
     const ext = uploadedFile.extname.toLowerCase();
-    const serverName =  `${uuid}__${originalName}__${type}__${size}.${ext}`;
+    const serverName =  `${uuid}--name-${originalName}--type-${type}--size-${size}.${ext}`;
 
     await uploadedFile.move(Helpers.tmpPath('uploads'), {
       name: serverName,
@@ -79,14 +79,20 @@ class MediaController {
 
     const uploadedFile = fields.fileobj
 
-    let originalName = uploadedFile.clientName.replace(/\.[^/.]+$/, "") // remove extension
-        originalName = originalName.replace('_','-') // if the name has underscores, replace it, so we can use _ later to parse the file name
+
+    const serverName = gatMetaFilename(uploadedFile.clientName, {
+      size: uploadedFile.size,
+      type: uploadedFile.type
+    })
+
+    // let originalName = uploadedFile.clientName.replace(/\.[^/.]+$/, "") // remove extension
+    //     originalName = originalName.replace('-','_').replace(/[^a-z0-9]/gi, '_').toLowerCase() // sanitize filename and remove - thast will be used fopr file params
     
-    const uuid = uuidv4();
-    const type = uploadedFile.type;
-    const size = uploadedFile.size;
-    const ext = uploadedFile.extname.toLowerCase();
-    const serverName =  `${uuid}__${originalName}__${type}__${size}.${ext}`;
+    // const uuid = uuidv4();
+    // const type = uploadedFile.type;
+    // const size = uploadedFile.size;
+    // const ext = uploadedFile.extname.toLowerCase();
+    // const serverName =  `${uuid}--name-${originalName}--type-${type}--size-${size}.${ext}`;
 
     await uploadedFile.move(Helpers.tmpPath('uploads'), {
       name: serverName,
@@ -126,14 +132,17 @@ class MediaController {
 
       // OK UPLOADED 
 
-      return response.json({
-        path: serverName,
-        name: `${originalName}.${ext}`,
-        size: size,
-        type: type,
-        ext: ext,
-        uuid: uuid
-      })
+
+      return response.json(parseMetaFilename(serverName))
+
+      // return response.json({
+      //   path: serverName,
+      //   // name: `${originalName}.${ext}`,
+      //   // size: size,
+      //   // type: type,
+      //   // ext: ext,
+      //   // uuid: uuid
+      // })
     }
 
   }
