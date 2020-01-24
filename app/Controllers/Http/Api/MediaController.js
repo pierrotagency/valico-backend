@@ -57,7 +57,8 @@ class MediaController {
     // let fields = request.only(['_validations'])
     //     fields.fileobj = request.file('fileobj')
 
-    // let validations = {object:{},messages:{}}
+
+    // let validations = {objects:{},messages:{}}
     // if(fields._validations){
     //   validations = safeParseJSON(fields._validations) // it might come as a JSON (if regular post) or as a stringified JSON if lone ajax
     //   delete fields._validations;
@@ -67,14 +68,29 @@ class MediaController {
     // const validation = await validate(fields, validations.objects, validations.messages)
     // if (validation.fails()) return response.status(422).send(validation.messages());
 
-
     // const uploadedFile = fields.fileobj
 
-    request.multipart.file('fileobj', {}, async (file) => {
+    const validationOptions = {
+      types: ['jpeg', 'jpg', 'png'],
+      size: '1mb'
+    }
 
+    console.log(request.header('_validations'))
 
+    request.multipart.file('fileobj', validationOptions, async (file) => {
+
+      file.size = file.stream.byteCount
+
+      await file.runValidations()
+
+      const error = file.error()
+      if (error.message) {
+        // throw new Error(error.message)
+        return response.status(422).send(error.message);
+      }
+      
       const serverName = gatMetaFilename(file.clientName, {
-        // size: file.size, // i dont have4 autoprocess so i don't know the filesize
+        size: file.size,
         type: file.type
       })
 
