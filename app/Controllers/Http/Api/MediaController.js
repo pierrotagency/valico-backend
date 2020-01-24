@@ -5,6 +5,7 @@ const uuidv4 = require("uuid/v4");
 const { validate } = use('Validator');
 const { safeParseJSON, gatMetaFilename, parseMetaFilename } = use('App/Helpers')
 const sharp = require('sharp');
+const Drive = use('Drive')
 
 class MediaController {
 
@@ -87,6 +88,7 @@ class MediaController {
     else{
 
 
+      // await Drive.get('relative-path-to-file')
       const outputFile = Helpers.tmpPath('uploads') + '/resizeddddd.jpg' 
 
       const inputFile = Helpers.tmpPath('uploads') + '/' + serverName
