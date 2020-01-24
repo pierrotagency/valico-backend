@@ -14,3 +14,6 @@ tmp
 database/development.sqlite
 
 .DS_Store
+
+
+public/storage
