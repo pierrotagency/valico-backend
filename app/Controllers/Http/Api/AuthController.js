@@ -72,12 +72,14 @@ class AuthController {
           Object.assign(user, token)
           return response.json(user)
         }
+        else{
+          return response.status(403).send({ message: 'Invalid Email / Password' });
+        }
         // let user = await auth.attempt(email, password);
 
       }
-      catch (e) {
-        console.log(e)
-        return response.status(403).send({ error: 'Invalid email or password' });
+      catch (e) {        
+        return response.status(500).send({ message: e.message });
       }
 
     } else {
