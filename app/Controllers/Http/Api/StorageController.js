@@ -124,37 +124,38 @@ class StorageController {
 
   async getImage({request, response, params}) {
       
-    const storage = params.storage ? params.storage : "storage";
+    const storage = params.storage ? params.storage : 'storage';
     const imageUri = `${params.catalog}/${params.file}`
     const query = request.all()
 
-    const format = query.format ? query.format : "jpg";
+    const format = query.format ? query.format : 'jpg';
     const width = query.width ? parseInt(query.width) : 480;
     const height = query.height ? parseInt(query.height) : 480;
+    const position = query.position ? parseInt(query.position) : 'centre';
     const quality = query.quality ? parseInt(query.quality) : 85;
-    const fit = query.fit ?  query.fit : "cover";
+    const fit = query.fit ?  query.fit : 'inside';
 
     response.implicitEnd = false
 
     try {
 
-        // the order of params DOES MATTER (for cache recognition)
+      // the order of params DOES MATTER (for cache recognition)
       const resFilename = gatMetaFilename(params.file, query, true, [])
       const resUri = `${params.catalog}/_${resFilename}`
 
-      console.log(resUri)
+      if(!query._noCache){
+        // handle already existing resizes
+        const resExists = await Drive.disk(storage).exists(resUri);
+        if(resExists){
 
-      // handle already existing resizes
-      const resExists = await Drive.disk(storage).exists(resUri);
-      if(resExists){
-
-        const image = await Drive.disk(storage).get(resUri)
-        const originalExt = params.file.split('.').pop()
-        
-        response.type(`image/${originalExt}`);
-        return response.send(image);      
+          const image = await Drive.disk(storage).get(resUri)
+          const originalExt = params.file.split('.').pop()
+          
+          response.type(`image/${originalExt}`);
+          return response.send(image);      
+        }
       }
-
+      
       const tmpFile = Helpers.tmpPath('resizing') + `/${uuidv4()}.${format}`
 
       const exists = await Drive.disk(storage).exists(imageUri);
@@ -175,14 +176,20 @@ class StorageController {
           });
           outStream.on('close', function() {
               
+              // response the resized image, put the resized into cache file, and delete de tmp image
               fs.readFile(tmpFile, {}, function(err,data){
                   if (!err) {
                       
                       Drive.disk(storage).put(resUri, data)
 
+                      fs.unlink(tmpFile,() =>{
+                        // console.log('delete tmp')
+                      })
+
                       response.type(`image/${format}`);
                       response.send(data) 
-                      response.end()                      
+                      response.end()   
+                      
                   } else {
                       console.log(err);
                   }
@@ -206,7 +213,8 @@ class StorageController {
       const transform = sharp().resize({ 
           width: width,
           height: height,
-          fit: fit
+          fit: fit,
+          position: position
       }).toFormat(format, {
           quality: quality
       });

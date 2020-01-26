@@ -51,7 +51,7 @@ const gatMetaFilename = ( originalFilename, params={}, keepOriginalMeta=false, h
 
     let stringParams = ''
     Object.keys(outParams).map(key => {
-        if(!excludeParams.includes(key)) 
+        if(!excludeParams.includes(key) && key.charAt(0)!=='_') 
             stringParams += '--' + key + '-' + outParams[key].toString().replace('-','_').replace(/[^a-z0-9]/gi, '_').toLowerCase()
     })
 
