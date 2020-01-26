@@ -134,8 +134,8 @@ module.exports = {
     |
     */
     processManually: [
-      '/api/v1/media/image/upload',
-      '/api/v1/media/upload/upload',
+      '/api/v1/storage/file/upload',
+      '/api/v1/storage/image/upload',
     ]
 
     /*

@@ -66,17 +66,6 @@ class PostController {
   }
 
   async update({auth, request, response}) {
-    
-    // const rules = {
-    //   // post: 'required',
-    //   name: 'required|min:6',
-    //   slug: 'required|unique:posts,slug'
-    // };
-
-    // const messages = {
-    //     'name.min': 'El min del nombre es de 6'
-    // }
-
     const fields = request.all();
 
     let validations = {object:{},messages:{}}

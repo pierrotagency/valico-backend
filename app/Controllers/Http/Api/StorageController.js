@@ -9,43 +9,81 @@ const Drive = use('Drive')
 class StorageController {
 
   
+  // async uploadFile({request, response}) {
+
+  //   let fields = request.only(['_validations'])
+  //       fields.fileobj = request.file('fileobj')
+
+  //   let validations = {object:{},messages:{}}
+  //   if(fields._validations){
+  //     validations = safeParseJSON(fields._validations) // it might come as a JSON (if regular post) or as a stringified JSON if lone ajax
+  //     delete fields._validations;
+  //   }
+
+  //   // TODO ****** custom validation menssages not working yet (only for FILE UPLOAD)    
+  //   const validation = await validate(fields, validations.objects, validations.messages)
+  //   if (validation.fails()) return response.status(422).send(validation.messages());
+
+
+  //   const uploadedFile = fields.fileobj
+
+  //   const serverName = gatMetaFilename(uploadedFile.clientName, {
+  //     size: uploadedFile.size,
+  //     type: uploadedFile.type
+  //   })
+
+  //   await uploadedFile.move(Helpers.tmpPath('uploads'), {
+  //     name: serverName,
+  //     overwrite: true
+  //   })
+  
+  //   if (!uploadedFile.moved()) {      
+  //     return response.status(422).send(uploadedFile.error());
+  //   }
+  //   else{
+
+  //     // OK UPLOADED 
+
+  //     return response.json(parseMetaFilename(serverName))
+  //   }
+
+  // }
+
+
   async uploadFile({request, response}) {
 
-    let fields = request.only(['_validations'])
-        fields.fileobj = request.file('fileobj')
-
-    let validations = {object:{},messages:{}}
-    if(fields._validations){
-      validations = safeParseJSON(fields._validations) // it might come as a JSON (if regular post) or as a stringified JSON if lone ajax
-      delete fields._validations;
+    let validations = {objects:{},messages:{}}
+    if(request.header('X-Validate')){
+      validations = JSON.parse(request.header('X-Validate')) 
     }
 
-    // TODO ****** custom validation menssages not working yet (only for FILE UPLOAD)    
-    const validation = await validate(fields, validations.objects, validations.messages)
-    if (validation.fails()) return response.status(422).send(validation.messages());
 
+    request.multipart.file('fileobj', validations.objects, async (file) => {
 
-    const uploadedFile = fields.fileobj
+      file.size = file.stream.byteCount
 
-    const serverName = gatMetaFilename(uploadedFile.clientName, {
-      size: uploadedFile.size,
-      type: uploadedFile.type
+      await file.runValidations()
+
+      const error = file.error()
+      if (error.message) {
+        // throw new Error(error.message)
+        return response.status(422).send(error.message);
+      }
+      
+      const serverName = gatMetaFilename(file.clientName, {
+        size: file.size,
+        type: file.type
+      })
+
+      const serverPath = `${getTodayISO()}/${serverName}`
+
+      await Drive.disk('storage').put(serverPath, file.stream)
+
+      return response.json({ ...{value: serverPath}, ...parseMetaFilename(serverName) })
+
     })
 
-    await uploadedFile.move(Helpers.tmpPath('uploads'), {
-      name: serverName,
-      overwrite: true
-    })
-  
-    if (!uploadedFile.moved()) {      
-      return response.status(422).send(uploadedFile.error());
-    }
-    else{
-
-      // OK UPLOADED 
-
-      return response.json(parseMetaFilename(serverName))
-    }
+    await request.multipart.process()
 
   }
 
@@ -80,7 +118,7 @@ class StorageController {
 
       await Drive.disk('storage').put(serverPath, file.stream)
 
-      return response.json({ ...{path: serverPath}, ...parseMetaFilename(serverName) })
+      return response.json({ ...{value: serverPath}, ...parseMetaFilename(serverName) })
 
     })
 
