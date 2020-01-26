@@ -123,14 +123,6 @@ class StorageController {
 
 
   async getImage({request, response, params}) {
-
-    // console.log(params)
-    // return response.json(params)
-    
-    // const filePath = `/${params.catalog}/${params.file}`
-
-    // const fileStream = await Drive.disk('storage').get(filePath)
-
       
     const storage = params.storage ? params.storage : "storage";
     const imageUri = `${params.catalog}/${params.file}`
@@ -140,28 +132,43 @@ class StorageController {
     const width = query.width ? parseInt(query.width) : 480;
     const height = query.height ? parseInt(query.height) : 480;
     const quality = query.quality ? parseInt(query.quality) : 85;
-    const crop = query.crop ?  query.crop : "cover";
+    const fit = query.fit ?  query.fit : "cover";
 
     response.implicitEnd = false
 
     try {
-      
+
+        // the order of params DOES MATTER (for cache recognition)
+      const resFilename = gatMetaFilename(params.file, query, true, [])
+      const resUri = `${params.catalog}/_${resFilename}`
+
+      console.log(resUri)
+
+      // handle already existing resizes
+      const resExists = await Drive.disk(storage).exists(resUri);
+      if(resExists){
+
+        const image = await Drive.disk(storage).get(resUri)
+        const originalExt = params.file.split('.').pop()
+        
+        response.type(`image/${originalExt}`);
+        return response.send(image);      
+      }
+
+      const tmpFile = Helpers.tmpPath('resizing') + `/${uuidv4()}.${format}`
+
       const exists = await Drive.disk(storage).exists(imageUri);
       if(!exists){
         return response.status(404).send(`Image [${imageUri}] not found in [${storage}]`);      
       }
 
       const inStream = Drive.disk(storage).getStream(imageUri);      
-      
             inStream.on('error', function(err) {
               console.log('InStream ERROR')
               console.log(err)          
             });
       
-      
-      const tmpFile = Helpers.tmpPath('resizing') + `/${uuidv4()}.${format}`
-
-      let outStream = fs.createWriteStream(tmpFile, {flags: "w"});
+      const outStream = fs.createWriteStream(tmpFile, {flags: "w"});
           outStream.on('error', function(err) {
               console.log("outStream Error");
               console.log(err)
@@ -171,7 +178,7 @@ class StorageController {
               fs.readFile(tmpFile, {}, function(err,data){
                   if (!err) {
                       
-                      Drive.disk(storage).put('_RES_' + params.file, data)
+                      Drive.disk(storage).put(resUri, data)
 
                       response.type(`image/${format}`);
                       response.send(data) 
@@ -182,9 +189,8 @@ class StorageController {
               });
 
           });
-          // outStream.on('finish', function() {
-          //   console.log("outStream finish");
-          // });
+          outStream.on('finish', function() {       
+          });
 
       // let transform = sharp()
       //               .resize({ width: 711, height: 400 })
@@ -200,7 +206,7 @@ class StorageController {
       const transform = sharp().resize({ 
           width: width,
           height: height,
-          fit: crop
+          fit: fit
       }).toFormat(format, {
           quality: quality
       });
