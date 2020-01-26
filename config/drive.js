@@ -24,21 +24,21 @@ module.exports = {
     | Local disk interacts with the a local folder inside your application
     |
     */
-    local: {
-      root: Helpers.tmpPath(),
-      driver: 'local'
-    },
+    // local: {
+    //   root: Helpers.tmpPath(),
+    //   driver: 'local'
+    // },
 
 
     /*
     |--------------------------------------------------------------------------
-    | Local Storage
+    | Local
     |--------------------------------------------------------------------------    
     */
-   storage: {
-    root: Helpers.publicPath('storage'),
-    driver: 'local'
-  },
+    local: {
+      root: Helpers.publicPath('storage'),
+      driver: 'local'
+    },
 
     /*
     |--------------------------------------------------------------------------

@@ -66,7 +66,7 @@ Route.group(() => {
     */
     Route.post('/storage/file/upload', 'Api/StorageController.uploadFile')
     Route.post('/storage/image/upload', 'Api/StorageController.uploadImage')
-    Route.get('/image/:storage/:catalog/:file?', 'Api/StorageController.getImage')
+    // Route.get('/image/:storage/:catalog/:file?', 'Api/StorageController.getImage')
     
     /*
     |--------------------------------------------------------------------------
@@ -77,3 +77,19 @@ Route.group(() => {
     
 
 }).prefix('api/v1');
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| STORAGE
+|--------------------------------------------------------------------------
+|
+*/
+Route.group(() => {
+        
+    Route.get('/image/:storage/:catalog/:file?', 'Api/StorageController.getImage')
+    
+
+}).prefix('storage');
