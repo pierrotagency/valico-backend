@@ -84,12 +84,9 @@ const parseMetaFilename = ( filename ) => {
     const name = filename.replace(/\.[^/.]+$/, "") // remove extension
     const ext = filename.split('.').pop()
 
-    obj.original = filename
-    obj.ext = ext
-    
     name.split('--').forEach((part,index) => {
         if(index===0)
-            obj.uuid = part
+            // obj.uuid = part
         else{
             const param = part.split('-')
             if(param.length===2) obj[param[0]] = param[1]
@@ -97,6 +94,8 @@ const parseMetaFilename = ( filename ) => {
     })
 
     // add computed filename for common purposes
+    // obj.original = filename
+    obj.ext = ext    
     obj.filename = (obj.name && obj.ext) ? `${obj.name}.${obj.ext}` : ''
 
     return obj
