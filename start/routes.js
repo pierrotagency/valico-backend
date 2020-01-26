@@ -43,9 +43,9 @@ Route.group(() => {
     |--------------------------------------------------------------------------
     */
     Route.put('/posts/:id', 'Api/PostController.update').middleware('auth').validator('UpdatePost')
-    Route.delete('posts/:id', 'Api/PostController.delete').middleware('auth')
-    Route.get('posts/:id/peep', 'Api/PostController.peep').middleware('auth')
-    Route.get('posts/:id', 'Api/PostController.get').middleware('auth')
+    Route.delete('/posts/:id', 'Api/PostController.delete').middleware('auth')
+    Route.get('/posts/:id/peep', 'Api/PostController.peep').middleware('auth')
+    Route.get('/posts/:id', 'Api/PostController.get').middleware('auth')
     Route.post('/posts', 'Api/PostController.store').middleware('auth').validator('StorePost')
     Route.get('/posts', 'Api/PostController.list').middleware('auth')
     
@@ -64,8 +64,9 @@ Route.group(() => {
     | API - Media
     |--------------------------------------------------------------------------
     */
-    Route.post('/media/file/upload', 'Api/MediaController.uploadFile')
-    Route.post('/media/image/upload', 'Api/MediaController.uploadImage')
+    Route.post('/storage/file/upload', 'Api/StorageController.uploadFile')
+    Route.post('/storage/image/upload', 'Api/StorageController.uploadImage')
+    Route.get('/image/:storage/:catalog/:file?', 'Api/StorageController.getImage')
     
     /*
     |--------------------------------------------------------------------------

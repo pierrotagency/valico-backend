@@ -12,10 +12,10 @@ const uuidv4 = require("uuid/v4");
  * @return {string}   The JSON always
  */
 const safeParseJSON = (str) => {    
-    if(typeof str === 'string')
+    if(typeof str === 'string' && (str.charAt(0) === '{'  || str.charAt(0) === '['))
         return JSON.parse(str);
     else
-        return str;    
+        return {};    
 }
 
 
@@ -103,6 +103,27 @@ const getTodayISO = () => {
 
 
 
+/**
+ * Remove all properties starting with _ from the object (in my schema, are meta properties, not attached to the object)
+ * @param  {object}   object - The object to be modified
+ * @return {object}   ... ref? TODO 
+ */
+const removeMetaFromObject = (object = {}) => {    
+    
+    Object.keys(object).map(key => {
+        if(key.charAt(0)==='_') delete object[key];        
+    })
+    
+    return object;
+
+}
+
+
+
+
+
+
+
 
 
 /**
@@ -150,5 +171,6 @@ module.exports = {
     safeParseJSON,
     gatMetaFilename,
     parseMetaFilename,
-    getTodayISO
+    getTodayISO,
+    removeMetaFromObject
 }
