@@ -14,6 +14,8 @@ const uuidv4 = require("uuid/v4");
 const safeParseJSON = (str) => {    
     if(typeof str === 'string' && (str.charAt(0) === '{'  || str.charAt(0) === '['))
         return JSON.parse(str);
+    else if(typeof str === 'object')
+        return str;
     else
         return {};    
 }
