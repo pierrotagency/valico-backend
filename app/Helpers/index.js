@@ -29,21 +29,46 @@ Photo-9.jpg,
 }
 To 52054432-5a54-4504-b90e-6e94c3e59852--name-photo_9--size-145963--type-image.jpg
 */
-const gatMetaFilename = ( originalFilename, params={}, uuid=null ) => {    
+const gatMetaFilename = ( originalFilename, params={}, keepOriginalMeta=false, uuid=null, hiddenParams = [] ) => {    
     
-    let newName = originalFilename.replace(/\.[^/.]+$/, "") // remove extension
-        newName = newName.replace('-','_').replace(/[^a-z0-9]/gi, '_').toLowerCase() // sanitize filename and remove - thast will be used fopr file params
-    
+    const dynamicMeta = ['original','uuid','ext','filename'] // avoid including this meta that will came from parseMetaFilename
+
+    const excludeParams = [...dynamicMeta, ...hiddenParams]
+
+    // console.log(excludeParams)
+
+    // return 'sssss';
+
     const prefixId = uuid ? uuid : uuidv4()
     
-    const ext = originalFilename.split('.').pop().toLowerCase()
+    const ext = originalFilename.split('.').pop().toLowerCase()   
+    
+    let outParams = {}
+    
+    if(keepOriginalMeta){
+        
+        const originalMeta = parseMetaFilename( originalFilename )
+        
+        outParams = {...originalMeta, ...params}
+    }
+    else{
+
+        let newName = originalFilename.replace(/\.[^/.]+$/, "") // remove extension
+        // newName = newName.replace('-','_').replace(/[^a-z0-9]/gi, '_').toLowerCase() // sanitize filename and remove - thast will be used fopr file params    
+    
+        outParams = {...{name: newName}, ...params}
+    
+    }
+
+    console.log(outParams)
 
     let stringParams = ''
-    Object.keys(params).map(key => {
-        stringParams += '--' + key + '-' + params[key].toString().replace('-','_').replace(/[^a-z0-9]/gi, '_').toLowerCase()
+    Object.keys(outParams).map(key => {
+        if(!excludeParams.includes(key)) 
+            stringParams += '--' + key + '-' + outParams[key].toString().replace('-','_').replace(/[^a-z0-9]/gi, '_').toLowerCase()
     })
-    
-    const finalName = `${prefixId}--name-${newName}${stringParams}.${ext}`
+
+    const finalName = `${prefixId}${stringParams}.${ext}`
 
     return finalName.toLowerCase();
 
