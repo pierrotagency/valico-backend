@@ -57,43 +57,9 @@ class StorageController {
       validations = JSON.parse(request.header('X-Validate')) 
     }
 
-
-    request.multipart.file('fileobj', validations.objects, async (file) => {
-
-      file.size = file.stream.byteCount
-
-      await file.runValidations()
-
-      const error = file.error()
-      if (error.message) {
-        // throw new Error(error.message)
-        return response.status(422).send(error.message);
-      }
-      
-      const serverName = gatMetaFilename(file.clientName, {
-        size: file.size,
-        type: file.type
-      })
-
-      const serverPath = `${getTodayISO()}/${serverName}`
-
-      await Drive.disk('storage').put(serverPath, file.stream)
-
-      return response.json({ ...{value: serverPath}, ...parseMetaFilename(serverName) })
-
-    })
-
-    await request.multipart.process()
-
-  }
-
-
-  async uploadImage({request, response}) {
-    // AdonisJS processManually exception on this route https://adonisjs.com/docs/4.0/file-uploads#_process_inside_the_controller
-
-    let validations = {objects:{},messages:{}}
-    if(request.header('X-Validate')){
-      validations = JSON.parse(request.header('X-Validate')) 
+    let storage = "local"
+    if(request.header('X-Storage')){
+      storage = request.header('X-Storage')
     }
 
 
@@ -116,7 +82,51 @@ class StorageController {
 
       const serverPath = `${getTodayISO()}/${serverName}`
 
-      await Drive.disk('storage').put(serverPath, file.stream)
+      await Drive.disk(storage).put(serverPath, file.stream)
+
+      return response.json({ ...{value: serverPath}, ...parseMetaFilename(serverName) })
+
+    })
+
+    await request.multipart.process()
+
+  }
+
+
+  async uploadImage({request, response}) {
+    // AdonisJS processManually exception on this route https://adonisjs.com/docs/4.0/file-uploads#_process_inside_the_controller
+
+    let validations = {objects:{},messages:{}}
+    if(request.header('X-Validate')){
+      validations = JSON.parse(request.header('X-Validate')) 
+    }
+
+    let storage = "local"
+    if(request.header('X-Storage')){
+      storage = request.header('X-Storage')
+    }
+
+
+    request.multipart.file('fileobj', validations.objects, async (file) => {
+
+      file.size = file.stream.byteCount
+
+      await file.runValidations()
+
+      const error = file.error()
+      if (error.message) {
+        // throw new Error(error.message)
+        return response.status(422).send(error.message);
+      }
+      
+      const serverName = gatMetaFilename(file.clientName, {
+        size: file.size,
+        type: file.type
+      })
+
+      const serverPath = `${getTodayISO()}/${serverName}`
+
+      await Drive.disk(storage).put(serverPath, file.stream)
 
       return response.json({ ...{value: serverPath}, ...parseMetaFilename(serverName) })
 
@@ -162,7 +172,7 @@ class StorageController {
 
   async getImage({request, response, params}) {
       
-    const storage = params.storage ? params.storage : 'storage';
+    const storage = params.storage ? params.storage : 'local';
     const imageUri = `${params.catalog}/${params.file}`
     const query = request.all()
 
