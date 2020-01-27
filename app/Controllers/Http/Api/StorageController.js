@@ -258,12 +258,15 @@ class StorageController {
       //                 // response,end()
       //             })
 
-      const transform = sharp().resize({ 
+      const transform = sharp()
+      .resize({ 
           width: width,
           height: height,
           fit: fit,
           position: position
-      }).toFormat(format, {
+      })
+      .rotate()
+      .toFormat(format, {
           quality: quality
       });
 
