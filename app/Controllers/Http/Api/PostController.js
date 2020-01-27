@@ -68,11 +68,13 @@ class PostController {
   async update({auth, request, response}) {
     const fields = request.all();
 
-    let validations = {object:{},messages:{}}
+    let validations = {objects:{},messages:{}}
     if(fields._validations){
       validations = safeParseJSON(fields._validations) // it might come as a JSON (if regular post) or as a stringified JSON if lone ajax
       delete fields._validations;
     }
+
+    console.log(validations)
     
     const validation = await validate(fields, validations.objects, validations.messages);
     if (!validation.fails()) {
