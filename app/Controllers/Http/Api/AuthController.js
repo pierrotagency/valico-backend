@@ -79,7 +79,8 @@ class AuthController {
 
       }
       catch (e) {        
-        return response.status(500).send({ message: e.message });
+        // return response.status(500).send({ message: e.message });
+        return response.status(403).send({ message: 'Invalid Email / Password' });
       }
 
     } else {
